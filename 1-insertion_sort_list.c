@@ -1,39 +1,58 @@
-#include <stdio.h>
 #include "sort.h"
+
+void swap_nodes(listint_t *left, listint_t *right, listint_t **list);
 
 /**
  * insertion_sort_list - Sorts a doubly linked list of integers
- *	in ascending order using the Insertion sort algorithm
- * @list: Double pointer to the head of the list
+ *                       in ascending order using insertion sort algorithm.
+ * @list: Double pointer to the head of the list.
  */
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *unsorted = *list, *current;
+	listint_t *current, *temp;
 
 	if (list == NULL || *list == NULL || (*list)->next == NULL)
 		return;
 
-	while (unsorted != NULL)
+	current = (*list)->next;
+
+	while (current != NULL)
 	{
-		current = unsorted;
-		unsorted = unsorted->next;
+		temp = current;
+		current = current->next;
 
-		while (current->prev != NULL && current->n < current->prev->n)
+		while (temp->prev != NULL && temp->n < temp->prev->n)
 		{
-			if (current->next != NULL)
-				current->next->prev = current->prev;
-			current->prev->next = current->next;
-			current->next = current->prev;
-			current->prev = current->prev->prev;
-			current->next->prev = current;
-
-			if (current->prev == NULL)
-				*list = current;
-			else
-				current->prev->next = current;
-
+			swap_nodes(temp->prev, temp, list);
 			print_list(*list);
 		}
 	}
+}
+
+/**
+ * swap_nodes - Swaps two adjacent nodes in a doubly linked list.
+ * @left: Pointer to the left node to swap.
+ * @right: Pointer to the right node to swap.
+ * @list: Double pointer to the head of the list.
+ */
+void swap_nodes(listint_t *left, listint_t *right, listint_t **list)
+{
+	listint_t *prev, *next;
+
+	prev = left->prev;
+	next = right->next;
+
+	if (prev != NULL)
+		prev->next = right;
+	else
+		*list = right;
+
+	if (next != NULL)
+		next->prev = left;
+
+	left->next = next;
+	left->prev = right;
+	right->next = left;
+	right->prev = prev;
 }
 
